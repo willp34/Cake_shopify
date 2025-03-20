@@ -11,7 +11,7 @@
 				
 				if ($json === false) {
 					throw new Exception("Failed to retrieve data from $url");
-					//echo "Failed to retrieve data from $url";
+				
 					exit;
 				}
 				$this->shopify_orders =json_decode($json,true);
