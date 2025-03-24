@@ -22,7 +22,12 @@
 				}
 				$this->shopify_orders =json_decode($json,true);
 				$this->no_orders= count($this->shopify_orders["orders"]);
-				$this->display();
+				
+				if (php_sapi_name() == "cli") {
+					$this->display();
+				}else{
+					$this->display_browser();
+				}
 		   
 	   }
 	   
@@ -53,7 +58,7 @@
 
 		 // Prevent division by zero
 		if ($this->no_orders === 0) {
-            return "0.00"; 
+            return "No Orders"; 
         }
 
 		   $average_order_value =  $this->cost_of_revenue()/$this->no_orders;
@@ -70,6 +75,41 @@
 				//echo "<br  />Revenue  :  £".  number_format($this->cost_of_revenue(), 2);
 				echo "Average order Value  :  £". $this->getAverageOrderValue();
 		   
+	   }
+	   
+	   private function display_browser(){
+	
+			?>
+			<h1>Orders   <?php  echo   $this->no_orders ?></h1>
+			<?php
+		 		   foreach($this->shopify_orders["orders"] as $order){
+							?>
+									<h2><?php echo $order['customer']['name']  ?></h2>
+							
+							
+							<ul>
+							
+							<?php
+								$order_total  = 0.00; 
+								 foreach($order['items'] as $product){
+										$order_total += $product['price'];
+									?> 
+										
+									<li>
+										<?php echo $product['name']."    <strong>£ ".$product['price']."</strong>";  ?>
+									</li>
+									<?php
+							   }
+							?>
+							</ul>
+							<p>Order Total  : <?php echo number_format($order_total,2) ;  ?></p>
+							<?php
+							
+							
+				   }
+
+
+				$this->display();
 	   }
 	   	   
 		   
